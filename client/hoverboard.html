@@ -1,0 +1,177 @@
+<head>
+  <title>HoverBoard</title>
+</head>
+
+<template name="layout">
+	<main id="main" role="main" class="container">
+		{{yield}}
+		
+		{{#if currentUser}}
+		{{else}}
+			<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+				<div class="container">
+					<ul class="nav navbar-nav">
+			      {{loginButtons align="left"}}
+			    </ul>
+				</div>
+			</nav>
+
+			<div class="row">
+				<div class="col-md-12">
+					<div class="alert alert-warning">Access denied</div>
+				</div>
+			</div>
+		{{/if}}
+
+		<footer class="row">
+			<div class="col-md-12">
+				<p class="text-right">HoverBoard by <a href="http://www.devyg.fr">devyg.fr</a></p>
+			</div>
+		</footer>
+	</main>
+</template>
+
+<template name="loading">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="alert alert-info">Loading...</div>
+		</div>
+	</div>
+</template>
+
+<template name="404">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="alert alert-danger">404 Not found. Try to <a href="{{pathFor 'hoverboard'}}">go back in 1985</a>.</div>
+		</div>
+	</div>
+</template>
+
+<template name="flashItem">
+  {{#if show}}
+    <div class="alert alert-{{type}} alert-dismissable">
+      {{message}}
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    </div>
+  {{/if}}
+</template>
+
+<template name="flashes">
+  {{#each flashes}}
+    {{> flashItem}}
+  {{/each}}
+</template>
+
+<template name="forms">
+	<div class="row">
+		<div class="col-md-5">
+			<form role="form" class="form-inline">
+				<div class="well well-sm">
+					<div class="row">
+						<div class="col-sm-10">
+							<select class="form-control" id="newDateDay" name="newDateDay">
+								{{#each days}}
+									<option{{isCurDay}}>{{this}}</option>
+								{{/each}}
+							</select>
+							<select class="form-control" id="newDateMonth" name="newDateMonth">
+								{{#each months}}
+									<option{{isCurMonth}}>{{this}}</option>
+								{{/each}}
+							</select>
+							<select class="form-control" id="newDateYear" name="newDateYear">
+								{{#each years}}
+									<option{{isCurYear}}>{{this}}</option>
+								{{/each}}
+							</select>
+						</div>
+						<div class="col-sm-2">
+							<button type="button" class="btn btn-default pull-right" id="newDateBtn"><span class="glyphicon glyphicon-plus"></span></button></span>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		{{#if currentEventId}}
+			<div class="col-md-7">
+				<form role="form" class="form-inline">
+					<div class="well well-sm">
+						<div class="row">
+							<div class="col-sm-12">
+								{{#with getEvent currentEventId}}
+								<p><span class="label label-success">{{eventDate}}</span></p>
+								{{/with}}
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-5">
+								<input type="text" name="newField1" id="newField1" placeholder="Client" class="form-control"> 
+							</div>
+							<div class="col-sm-5">
+								<input type="text" name="newField2" id="newField2" placeholder="DJ" class="form-control">
+							</div>
+							<div class="col-sm-2">
+								<button type="button" class="btn btn-default pull-right" id="newShowBtn"><span class="glyphicon glyphicon-floppy-disk"></span></button></span>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		{{/if}}
+	</div>
+</template>
+
+<template name="hoverboard">
+	{{#if currentUser}}
+		<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+			<div class="container">
+				<div class="row">
+					<div class="navbar-header">
+					  <a class="navbar-brand" href="#">HoverBoard</a>
+					  <ul class="nav navbar-nav">
+				      {{loginButtons align="left"}}
+				    </ul>
+					</div>
+		    </div>
+		    <div class="hidden-xs hidden-sm">
+					{{>forms}}
+				</div>
+			</div>
+		</nav>
+		 <div class="visible-xs visible-sm">
+			{{>forms}}
+		</div>
+		<div class="row">
+			<div class="col-sm-9">
+				<table class="table">
+					<tbody>
+						{{#each getEvents}}
+							<tr>
+								<td class="col-xs-3">
+									<button type="button" class="btn btn-default col-xs-12 event" data-id="{{this._id}}">{{eventDate}}</button>
+								</td>
+								<td class="col-xs-8 event-shows" data-id="{{this._id}}">
+									<table class="table table-condensed table-hover">
+										<tbody>
+											{{#each getShows this._id}}
+											<tr>
+												<td class="col-xs-5">{{this.field1}}</td>
+												<td class="col-xs-5">{{this.field2}}</td>
+												<td class="col-xs-2"><a href="#" class="pull-right delete-show" data-id="{{this._id}}"><span class="glyphicon glyphicon-remove"></span></a></td>
+											</tr>
+											{{/each}}
+										</tbody>
+									</table>	
+								</td>
+								<td class="col-xs-1"><a href="#" class="pull-right delete-event" data-id="{{this._id}}"><span class="glyphicon glyphicon-trash"></span></a></td>
+							</tr>
+						{{/each}}
+					</tbody>
+				</table>
+			</div>
+			<div class="col-sm-3" id="alerts">
+				{{> flashes}}
+			</div>
+		</div>
+	{{/if}}
+</template>

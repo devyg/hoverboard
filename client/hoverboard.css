@@ -1,0 +1,11 @@
+@media (min-width: 992px) {
+	body {padding-top: 170px;}
+}
+
+@media (max-width: 991px) {
+	body {padding-top: 70px;}
+}
+
+.event {font-weight: bold; text-align: center;}
+
+footer {color: #ccc; font-size: 12px;}
